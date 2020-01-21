@@ -1,51 +1,34 @@
 import React, { useEffect, useState } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  CardImg,
-  CardText,
-  CardBody,
-  CardTitle,
-  CardSubtitle,
-  Button
-} from "reactstrap";
-
+import { Button, Grid } from "@material-ui/core";
+import ItemCard from "./Components/ItemCard";
 const App = () => {
   const [data, setData] = useState({});
   const products = Object.values(data);
   useEffect(() => {
     const fetchProducts = async () => {
-      const response = await fetch("./data/products.json");
+      const response = await fetch("/data/products.json");
       const json = await response.json();
       setData(json);
     };
     fetchProducts();
   }, []);
 
+  const itemCards = products.map(product => (
+    <Grid item key={product.sku}>
+      <ItemCard key={product.sku} product={product} />
+    </Grid>
+  ));
   return (
     <div>
-      <Container>
-        {products.map(product => (
-          <Card key={product.sku}>
-            <CardImg
-              style={{
-                height: "30vh",
-                width: "50vh"
-              }}
-              top
-              src={require("../public/data/products/" + product.sku + "_1.jpg")}
-              alt="Card image cap"
-            />
-            <CardBody>
-              <CardTitle>{product.title}</CardTitle>
-              <CardText>{product.style}</CardText>
-              <Button color="success">Add to Cart</Button>
-            </CardBody>
-          </Card>
-        ))}
-      </Container>
+      <Grid
+        container
+        direction="row"
+        justify="center"
+        alignItems="center"
+        spacing={2}
+      >
+        {itemCards}
+      </Grid>
     </div>
   );
 };
