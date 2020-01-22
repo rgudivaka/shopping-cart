@@ -33,7 +33,62 @@ const App = () => {
   const [state, setState] = useState({ right: false });
   const [price, setPrice] = useState(0);
   const [cart, setCart] = useState([]);
+  const [inventory, setInventory] = useState({
+    "12064273040195392": {
+      S: 0,
+      M: 3,
+      L: 1,
+      XL: 2
+    },
+    "51498472915966370": {
+      S: 0,
+      M: 2,
+      L: 3,
+      XL: 2
+    }
+  });
+  const updateInventory = (sku, size, operation) => {
+    for (var key in inventory) {
+      if (key === sku.toString()) {
+        let newObj;
+        if (operation === "subtract") {
+          if (size === "Small") {
+            newObj = inventory[key];
+            newObj["S"] = inventory[key]["S"] - 1;
+          } else if (size === "Medium") {
+            newObj = inventory[key];
+            newObj["M"] = inventory[key]["M"] - 1;
+          } else if (size === "Large") {
+            newObj = inventory[key];
+            newObj["L"] = inventory[key]["L"] - 1;
+          } else if (size === "Xtra Large") {
+            newObj = inventory[key];
+            newObj["XL"] = inventory[key]["XL"] - 1;
+          }
+        }
+        if (operation === "add") {
+          if (size === "Small") {
+            newObj = inventory[key];
+            newObj["S"] = inventory[key]["S"] + 1;
+          } else if (size === "Medium") {
+            newObj = inventory[key];
+            newObj["M"] = inventory[key]["M"] + 1;
+          } else if (size === "Large") {
+            newObj = inventory[key];
+            newObj["L"] = inventory[key]["L"] + 1;
+          } else if (size === "Xtra Large") {
+            newObj = inventory[key];
+            newObj["XL"] = inventory[key]["XL"] + 1;
+          }
+        }
+        let newInv = inventory;
+        newInv[key] = newObj;
+        setInventory(newInv);
+      }
+    }
+  };
   const addToCart = (product, size) => {
+    updateInventory(product.sku, size, "subtract");
     let exists = false;
     cart.forEach(item => {
       if (product.sku === item.product.sku && size === item.size) {
@@ -53,16 +108,13 @@ const App = () => {
     }
   };
   const removeFromCart = (product, size) => {
-    console.log(cart);
+    updateInventory(product.sku, size, "add");
     let removeindex = 0;
     let remove = false;
     const newCart = cart.forEach((item, index) => {
       if (product.sku === item.product.sku && size === item.size) {
-        console.log("checked");
         item.quantity = item.quantity - 1;
-        console.log(item.quantity);
         if (item.quantity === 0) {
-          console.log("set to true");
           remove = true;
         }
         removeindex = index;
@@ -76,7 +128,13 @@ const App = () => {
     }
     setPrice(Math.round((price - product.price) * 100) / 100);
     setCart((cart: update));
-    console.log(cart);
+  };
+  const filterInventory = sku => {
+    for (var key in inventory) {
+      if (key === sku.toString()) {
+        return inventory[key];
+      }
+    }
   };
   const products = Object.values(data);
   const classes = useStyles();
@@ -112,6 +170,7 @@ const App = () => {
               size={item.size}
               quantity={item.quantity}
               onClick={removeFromCart}
+              cart={cart}
             />
           </ListItem>
         ))}
@@ -124,12 +183,20 @@ const App = () => {
       </List>
     </div>
   );
-
-  const itemCards = products.map(product => (
-    <Grid item key={product.sku}>
-      <ItemCard key={product.sku} product={product} onClick={addToCart} />
-    </Grid>
-  ));
+  const getItemCards = () => {
+    const itemCards = products.map(product => (
+      <Grid item key={product.sku}>
+        <ItemCard
+          key={product.sku}
+          product={product}
+          onClick={addToCart}
+          inventory={filterInventory(product.sku)}
+          appInventory={inventory}
+        />
+      </Grid>
+    ));
+    return itemCards;
+  };
 
   return (
     <div>
@@ -163,7 +230,7 @@ const App = () => {
           alignItems="center"
           spacing={2}
         >
-          {itemCards}
+          {getItemCards()}
         </Grid>
       </Container>
     </div>

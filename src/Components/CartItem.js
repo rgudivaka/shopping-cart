@@ -38,6 +38,7 @@ export default function CartItem({ product, size, quantity, onClick }) {
   const remove = () => {
     onClick(product, size);
   };
+
   return (
     <Card className={classes.card}>
       <div className={classes.details}>
