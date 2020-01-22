@@ -34,7 +34,6 @@ const App = () => {
   const [price, setPrice] = useState(0);
   const [cart, setCart] = useState([]);
   const addToCart = (product, size) => {
-    console.log(cart);
     let exists = false;
     cart.forEach(item => {
       if (product.sku === item.product.sku && size === item.size) {
@@ -51,7 +50,6 @@ const App = () => {
       setPrice(Math.round((price + product.price) * 100) / 100);
       setState({ ...state, right: true });
       setCart((cart: newCart));
-      console.log(cart);
     }
   };
   const removeFromCart = (product, size) => {
@@ -60,18 +58,19 @@ const App = () => {
     let remove = false;
     const newCart = cart.forEach((item, index) => {
       if (product.sku === item.product.sku && size === item.size) {
+        console.log("checked");
         item.quantity = item.quantity - 1;
+        console.log(item.quantity);
         if (item.quantity === 0) {
+          console.log("set to true");
           remove = true;
         }
         removeindex = index;
       }
     });
-    console.log(removeindex);
-    const updatedCart = cart.splice(removeindex, 1);
     let update;
     if (remove) {
-      update = updatedCart;
+      update = cart.splice(removeindex, 1);
     } else {
       update = newCart;
     }
