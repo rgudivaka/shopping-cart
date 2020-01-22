@@ -31,6 +31,9 @@ const ItemCard = ({ product, onClick }) => {
           <Typography variant="body2" color="textSecondary" component="p">
             {product.style}
           </Typography>
+          <Typography variant="subtitle1" color="textSecondary" component="p">
+            ${product.price}
+          </Typography>
         </CardContent>
       </CardActionArea>
       <CardActions>
@@ -39,10 +42,10 @@ const ItemCard = ({ product, onClick }) => {
           color="primary"
           aria-label="contained primary button group"
         >
-          <Button onClick={add}>Small</Button>
-          <Button onClick={add}>Medium</Button>
-          <Button onClick={add}>Large</Button>
-          <Button onClick={add}>XL</Button>
+          <Button onClick={() => add("Small")}>Small</Button>
+          <Button onClick={() => add("Medium")}>Medium</Button>
+          <Button onClick={() => add("Large")}>Large</Button>
+          <Button onClick={() => add("Xtra Large")}>XL</Button>
         </ButtonGroup>
       </CardActions>
     </Card>

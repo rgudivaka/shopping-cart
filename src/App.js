@@ -30,14 +30,53 @@ const useStyles = makeStyles(theme => ({
 
 const App = () => {
   const [data, setData] = useState({});
-  const [state, setState] = useState({ right: false, cart: [] });
+  const [state, setState] = useState({ right: false });
+  const [price, setPrice] = useState(0);
   const [cart, setCart] = useState([]);
   const addToCart = (product, size) => {
-    let newItem = { product: product, size: size };
-    let newCart = cart.push(newItem);
-    console.log(product);
-    setCart((cart: newCart));
-    setState({ ...state, right: true });
+    console.log(cart);
+    let exists = false;
+    cart.forEach(item => {
+      if (product.sku === item.product.sku && size === item.size) {
+        item.quantity += 1;
+        exists = true;
+      }
+    });
+    if (exists) {
+      setState({ ...state, right: true });
+      setPrice(price + product.price);
+    } else {
+      let newItem = { product: product, size: size, quantity: 1 };
+      let newCart = cart.push(newItem);
+      setPrice(Math.round((price + product.price) * 100) / 100);
+      setState({ ...state, right: true });
+      setCart((cart: newCart));
+      console.log(cart);
+    }
+  };
+  const removeFromCart = (product, size) => {
+    console.log(cart);
+    let removeindex = 0;
+    let remove = false;
+    const newCart = cart.forEach((item, index) => {
+      if (product.sku === item.product.sku && size === item.size) {
+        item.quantity = item.quantity - 1;
+        if (item.quantity === 0) {
+          remove = true;
+        }
+        removeindex = index;
+      }
+    });
+    console.log(removeindex);
+    const updatedCart = cart.splice(removeindex, 1);
+    let update;
+    if (remove) {
+      update = updatedCart;
+    } else {
+      update = newCart;
+    }
+    setPrice(Math.round((price - product.price) * 100) / 100);
+    setCart((cart: update));
     console.log(cart);
   };
   const products = Object.values(data);
@@ -57,7 +96,6 @@ const App = () => {
     ) {
       return;
     }
-
     setState({ ...state, [side]: open });
   };
   const sideList = side => (
@@ -70,13 +108,20 @@ const App = () => {
       <List>
         {cart.map(item => (
           <ListItem key={item.product.sku}>
-            <CartItem product={item.product} size={item.size} />
+            <CartItem
+              product={item.product}
+              size={item.size}
+              quantity={item.quantity}
+              onClick={removeFromCart}
+            />
           </ListItem>
         ))}
       </List>
       <Divider />
       <List>
-        <ListItem>Total Price: </ListItem>
+        <ListItem>
+          <h3>Total Price: ${price} </h3>
+        </ListItem>
       </List>
     </div>
   );

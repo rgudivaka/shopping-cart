@@ -32,9 +32,12 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function CartItem({ product, size }) {
+export default function CartItem({ product, size, quantity, onClick }) {
   const classes = useStyles();
   const theme = useTheme();
+  const remove = () => {
+    onClick(product, size);
+  };
   return (
     <Card className={classes.card}>
       <div className={classes.details}>
@@ -45,10 +48,17 @@ export default function CartItem({ product, size }) {
           <Typography variant="subtitle1" color="textSecondary">
             {product.style}
           </Typography>
+          <Typography variant="subtitle2" color="textSecondary">
+            Size: {size}
+          </Typography>
+          <Typography variant="subtitle2" color="textSecondary">
+            Quantity: {quantity}
+          </Typography>
         </CardContent>
         <div className={classes.controls}>
-          <IconButton aria-label="previous">-</IconButton>
-          <IconButton aria-label="play/pause">+</IconButton>
+          <IconButton aria-label="remove" onClick={remove}>
+            Remove
+          </IconButton>
         </div>
       </div>
       <CardMedia
