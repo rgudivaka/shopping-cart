@@ -10,7 +10,10 @@ import {
   ButtonGroup
 } from "@material-ui/core";
 
-const ItemCard = product => {
+const ItemCard = ({ product, onClick }) => {
+  const add = size => {
+    onClick(product, size);
+  };
   return (
     <Card variant="outlined">
       <CardActionArea>
@@ -18,15 +21,15 @@ const ItemCard = product => {
           component="img"
           alt="Product Image"
           height="140"
-          image={"/data/products/" + product.product.sku + "_1.jpg"}
-          title="Contemplative Reptile"
+          image={"/data/products/" + product.sku + "_1.jpg"}
+          title="Product Image"
         />
         <CardContent>
           <Typography gutterBottom variant="h5" component="h2">
-            {product.product.title}
+            {product.title}
           </Typography>
           <Typography variant="body2" color="textSecondary" component="p">
-            {product.product.style}
+            {product.style}
           </Typography>
         </CardContent>
       </CardActionArea>
@@ -36,10 +39,10 @@ const ItemCard = product => {
           color="primary"
           aria-label="contained primary button group"
         >
-          <Button>Small</Button>
-          <Button>Medium</Button>
-          <Button>Large</Button>
-          <Button>XL</Button>
+          <Button onClick={add}>Small</Button>
+          <Button onClick={add}>Medium</Button>
+          <Button onClick={add}>Large</Button>
+          <Button onClick={add}>XL</Button>
         </ButtonGroup>
       </CardActions>
     </Card>
