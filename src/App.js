@@ -30,12 +30,14 @@ const useStyles = makeStyles(theme => ({
 
 const App = () => {
   const [data, setData] = useState({});
-  const [state, setState] = useState({ right: false });
+  const [state, setState] = useState({ right: false, cart: [] });
   const [cart, setCart] = useState([]);
   const addToCart = (product, size) => {
     let newItem = { product: product, size: size };
+    let newCart = cart.push(newItem);
     console.log(product);
-    setCart([...cart, product]);
+    setCart((cart: newCart));
+    setState({ ...state, right: true });
     console.log(cart);
   };
   const products = Object.values(data);
@@ -67,8 +69,8 @@ const App = () => {
     >
       <List>
         {cart.map(item => (
-          <ListItem key={item.sku}>
-            <CartItem product={item} size={item.price} />
+          <ListItem key={item.product.sku}>
+            <CartItem product={item.product} size={item.size} />
           </ListItem>
         ))}
       </List>
