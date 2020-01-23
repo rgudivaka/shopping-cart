@@ -20,6 +20,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import CartItem from "./Components/CartItem";
 import firebase from "firebase/app";
 import "firebase/database";
+import "firebase/auth";
+import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
 const useStyles = makeStyles(theme => ({
   title: {
     flex: 1
@@ -28,6 +30,13 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: 1
   }
 }));
+const uiConfig = {
+  signInFlow: "popup",
+  signInOptions: [firebase.auth.GoogleAuthProvider.PROVIDER_ID],
+  callbacks: {
+    signInSuccessWithAuthResult: () => false
+  }
+};
 const firebaseConfig = {
   apiKey: "AIzaSyBYxiWCaBqlpEk4oTdzJaxk5iz8rVt1CbA",
   authDomain: "react-shopping-cart-62d0e.firebaseapp.com",
@@ -44,8 +53,25 @@ const App = () => {
   const [data, setData] = useState({});
   const [state, setState] = useState({ right: false });
   const [price, setPrice] = useState(0);
+  const [user, setUser] = useState(null);
   const [cart, setCart] = useState([]);
   const [inventory, setInventory] = useState(undefined);
+  const Welcome = ({ user }) => (
+    <>
+      Welcome, {user.displayName}
+      <IconButton onClick={() => firebase.auth().signOut()}>
+        <Button variant="contained" color="secondary">
+          Log out
+        </Button>
+      </IconButton>
+    </>
+  );
+  useEffect(() => {
+    firebase.auth().onAuthStateChanged(setUser);
+  }, []);
+  const SignIn = () => (
+    <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()} />
+  );
   const addToCart = (product, size) => {
     let exists = false;
     cart.forEach(item => {
@@ -155,6 +181,7 @@ const App = () => {
           <Typography variant="h6" className={classes.title}>
             React Clothing
           </Typography>
+          {user ? <Welcome user={user} /> : <SignIn />}
           <IconButton
             onClick={toggleDrawer("right", true)}
             edge="start"
