@@ -11,109 +11,18 @@ import {
   Tooltip
 } from "@material-ui/core";
 
-const ItemCard = ({ product, onClick, inventory, appInventory }) => {
-  console.log(inventory);
-  const [state, setState] = useState({
-    small: {
-      stock: "In Stock",
-      disabled: false
-    },
-    medium: {
-      stock: "In Stock",
-      disabled: false
-    },
-    large: {
-      stock: "In Stock",
-      disabled: false
-    },
-    xl: {
-      stock: "In Stock",
-      disabled: false
-    }
-  });
-  console.log(state);
+const ItemCard = ({ product, onClick, inv }) => {
   const add = size => {
     onClick(product, size);
-    checkInventory();
+    let newInv = inventory;
+    --newInv[product.sku][size];
+    setInventory(newInv);
   };
-
-  const checkInventory = () => {
-    for (var key in inventory) {
-      if (inventory[key] === 0) {
-        if (key === "S") {
-          const newState = {
-            stock: "Out of Stock",
-            disabled: true
-          };
-          setState({ ...state, small: newState });
-        } else if (key === "M") {
-          setState({
-            ...state,
-            medium: {
-              stock: "Out of Stock",
-              disabled: true
-            }
-          });
-        } else if (key === "L") {
-          setState({
-            ...state,
-            large: {
-              stock: "Out of Stock",
-              disabled: true
-            }
-          });
-        } else if (key === "XL") {
-          setState({
-            ...state,
-            xl: {
-              stock: "Out of Stock",
-              disabled: true
-            }
-          });
-        }
-      }
-    }
-  };
-  useEffect(() => {
-    const checkInventory = () => {
-      for (var key in inventory) {
-        if (inventory[key] === 0) {
-          if (key === "S") {
-            const newState = {
-              stock: "Out of Stock",
-              disabled: true
-            };
-            setState({ ...state, small: newState });
-          } else if (key === "M") {
-            setState({
-              ...state,
-              medium: {
-                stock: "Out of Stock",
-                disabled: true
-              }
-            });
-          } else if (key === "L") {
-            setState({
-              ...state,
-              large: {
-                stock: "Out of Stock",
-                disabled: true
-              }
-            });
-          } else if (key === "XL") {
-            setState({
-              ...state,
-              xl: {
-                stock: "Out of Stock",
-                disabled: true
-              }
-            });
-          }
-        }
-      }
-    };
-    checkInventory();
-  }, [setState, inventory]);
+  const inventory = inv.inventory;
+  console.log(inventory[product.sku]);
+  const setInventory = inv.setInventory;
+  const inStock = "In Stock";
+  const ooStock = "Out of Stock";
   return (
     <Card variant="outlined">
       <CardActionArea>
@@ -142,34 +51,50 @@ const ItemCard = ({ product, onClick, inventory, appInventory }) => {
           color="primary"
           aria-label="contained primary button group"
         >
-          <Tooltip placement="top" title={state.small.stock} arrow>
+          <Tooltip
+            placement="top"
+            title={inventory[product.sku]["S"] <= 0 ? ooStock : inStock}
+            arrow
+          >
             <Button
-              onClick={() => add("Small")}
-              disabled={state.small.disabled}
+              onClick={() => add("S")}
+              disabled={inventory[product.sku]["S"] <= 0}
             >
               Small
             </Button>
           </Tooltip>
-          <Tooltip placement="top" title={state.medium.stock} arrow>
+          <Tooltip
+            placement="top"
+            title={inventory[product.sku]["M"] <= 0 ? ooStock : inStock}
+            arrow
+          >
             <Button
-              onClick={() => add("Medium")}
-              disabled={state.medium.disabled}
+              onClick={() => add("M")}
+              disabled={inventory[product.sku]["M"] <= 0}
             >
               Medium
             </Button>
           </Tooltip>
-          <Tooltip placement="top" title={state.large.stock} arrow>
+          <Tooltip
+            placement="top"
+            title={inventory[product.sku]["L"] <= 0 ? ooStock : inStock}
+            arrow
+          >
             <Button
-              onClick={() => add("Large")}
-              disabled={state.large.disabled}
+              onClick={() => add("L")}
+              disabled={inventory[product.sku]["L"] <= 0}
             >
               Large
             </Button>
           </Tooltip>
-          <Tooltip placement="top" title={state.xl.stock} arrow>
+          <Tooltip
+            placement="top"
+            title={inventory[product.sku]["XL"] <= 0 ? ooStock : inStock}
+            arrow
+          >
             <Button
-              onClick={() => add("Xtra Large")}
-              disabled={state.xl.disabled}
+              onClick={() => add("XL")}
+              disabled={inventory[product.sku]["XL"] <= 0}
             >
               XL
             </Button>

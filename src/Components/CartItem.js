@@ -32,11 +32,23 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function CartItem({ product, size, quantity, onClick }) {
+export default function CartItem({
+  product,
+  size,
+  quantity,
+  onClick,
+  inventory
+}) {
+  console.log(typeof size);
+  const inv = inventory.inventory;
+  const setInventory = inventory.setInventory;
   const classes = useStyles();
   const theme = useTheme();
   const remove = () => {
     onClick(product, size);
+    let newInv = inv;
+    ++newInv[product.sku][size];
+    setInventory(newInv);
   };
 
   return (
