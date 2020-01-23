@@ -18,7 +18,8 @@ import ItemCard from "./Components/ItemCard";
 import MenuIcon from "@material-ui/icons/Menu";
 import { makeStyles } from "@material-ui/core/styles";
 import CartItem from "./Components/CartItem";
-
+import firebase from "firebase/app";
+import "firebase/database";
 const useStyles = makeStyles(theme => ({
   title: {
     flex: 1
@@ -27,116 +28,24 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: 1
   }
 }));
-
+const firebaseConfig = {
+  apiKey: "AIzaSyBYxiWCaBqlpEk4oTdzJaxk5iz8rVt1CbA",
+  authDomain: "react-shopping-cart-62d0e.firebaseapp.com",
+  databaseURL: "https://react-shopping-cart-62d0e.firebaseio.com",
+  projectId: "react-shopping-cart-62d0e",
+  storageBucket: "react-shopping-cart-62d0e.appspot.com",
+  messagingSenderId: "450215667642",
+  appId: "1:450215667642:web:c97e0be213cc619ca91f83",
+  measurementId: "G-EPTTNE87WJ"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database().ref();
 const App = () => {
   const [data, setData] = useState({});
   const [state, setState] = useState({ right: false });
   const [price, setPrice] = useState(0);
   const [cart, setCart] = useState([]);
-  const [inventory, setInventory] = useState({
-    "12064273040195392": {
-      S: 0,
-      M: 3,
-      L: 1,
-      XL: 2
-    },
-    "51498472915966370": {
-      S: 0,
-      M: 2,
-      L: 3,
-      XL: 2
-    },
-    "10686354557628304": {
-      S: 1,
-      M: 2,
-      L: 2,
-      XL: 1
-    },
-    "11033926921508488": {
-      S: 3,
-      M: 2,
-      L: 0,
-      XL: 1
-    },
-    "39876704341265610": {
-      S: 2,
-      M: 0,
-      L: 0,
-      XL: 0
-    },
-    "10412368723880252": {
-      S: 3,
-      M: 2,
-      L: 2,
-      XL: 2
-    },
-    "8552515751438644": {
-      S: 2,
-      M: 0,
-      L: 0,
-      XL: 2
-    },
-    "18644119330491310": {
-      S: 3,
-      M: 3,
-      L: 2,
-      XL: 0
-    },
-    "11854078013954528": {
-      S: 1,
-      M: 1,
-      L: 1,
-      XL: 0
-    },
-    "876661122392077": {
-      S: 3,
-      M: 1,
-      L: 0,
-      XL: 1
-    },
-    "9197907543445676": {
-      S: 3,
-      M: 3,
-      L: 1,
-      XL: 2
-    },
-    "10547961582846888": {
-      S: 2,
-      M: 2,
-      L: 0,
-      XL: 0
-    },
-    "6090484789343891": {
-      S: 2,
-      M: 0,
-      L: 2,
-      XL: 3
-    },
-    "18532669286405344": {
-      S: 2,
-      M: 3,
-      L: 0,
-      XL: 2
-    },
-    "5619496040738316": {
-      S: 1,
-      M: 3,
-      L: 3,
-      XL: 2
-    },
-    "11600983276356164": {
-      S: 3,
-      M: 3,
-      L: 3,
-      XL: 1
-    },
-    "27250082398145996": {
-      S: 1,
-      M: 0,
-      L: 0,
-      XL: 2
-    }
-  });
+  const [inventory, setInventory] = useState(undefined);
   const addToCart = (product, size) => {
     let exists = false;
     cart.forEach(item => {
@@ -180,6 +89,9 @@ const App = () => {
   const products = Object.values(data);
   const classes = useStyles();
   useEffect(() => {
+    db.once("value").then(snap => {
+      setInventory(snap.val());
+    });
     const fetchProducts = async () => {
       const response = await fetch("/data/products.json");
       const json = await response.json();

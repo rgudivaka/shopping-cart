@@ -39,7 +39,6 @@ export default function CartItem({
   onClick,
   inventory
 }) {
-  console.log(typeof size);
   const inv = inventory.inventory;
   const setInventory = inventory.setInventory;
   const classes = useStyles();

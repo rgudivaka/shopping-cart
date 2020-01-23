@@ -12,17 +12,18 @@ import {
 } from "@material-ui/core";
 
 const ItemCard = ({ product, onClick, inv }) => {
+  const inventory = inv.inventory;
+  const setInventory = inv.setInventory;
   const add = size => {
     onClick(product, size);
     let newInv = inventory;
     --newInv[product.sku][size];
     setInventory(newInv);
   };
-  const inventory = inv.inventory;
-  console.log(inventory[product.sku]);
-  const setInventory = inv.setInventory;
-  const inStock = "In Stock";
-  const ooStock = "Out of Stock";
+  const inStock = size => {
+    if (!inventory) return true;
+    return inventory[product.sku][size] <= 0;
+  };
   return (
     <Card variant="outlined">
       <CardActionArea>
@@ -51,51 +52,23 @@ const ItemCard = ({ product, onClick, inv }) => {
           color="primary"
           aria-label="contained primary button group"
         >
-          <Tooltip
-            placement="top"
-            title={inventory[product.sku]["S"] <= 0 ? ooStock : inStock}
-            arrow
-          >
-            <Button
-              onClick={() => add("S")}
-              disabled={inventory[product.sku]["S"] <= 0}
-            >
+          <Tooltip placement="top" title={"In Stock"} arrow>
+            <Button onClick={() => add("S")} disabled={inStock("S")}>
               Small
             </Button>
           </Tooltip>
-          <Tooltip
-            placement="top"
-            title={inventory[product.sku]["M"] <= 0 ? ooStock : inStock}
-            arrow
-          >
-            <Button
-              onClick={() => add("M")}
-              disabled={inventory[product.sku]["M"] <= 0}
-            >
+          <Tooltip placement="top" title={"In Stock"} arrow>
+            <Button onClick={() => add("M")} disabled={inStock("M")}>
               Medium
             </Button>
           </Tooltip>
-          <Tooltip
-            placement="top"
-            title={inventory[product.sku]["L"] <= 0 ? ooStock : inStock}
-            arrow
-          >
-            <Button
-              onClick={() => add("L")}
-              disabled={inventory[product.sku]["L"] <= 0}
-            >
+          <Tooltip placement="top" title={"In Stock"} arrow>
+            <Button onClick={() => add("L")} disabled={inStock("L")}>
               Large
             </Button>
           </Tooltip>
-          <Tooltip
-            placement="top"
-            title={inventory[product.sku]["XL"] <= 0 ? ooStock : inStock}
-            arrow
-          >
-            <Button
-              onClick={() => add("XL")}
-              disabled={inventory[product.sku]["XL"] <= 0}
-            >
+          <Tooltip placement="top" title={"In Stock"} arrow>
+            <Button onClick={() => add("XL")} disabled={inStock("XL")}>
               XL
             </Button>
           </Tooltip>
